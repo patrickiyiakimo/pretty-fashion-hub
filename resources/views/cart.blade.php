@@ -107,7 +107,7 @@
                                             ${{ number_format($item->product->price * $item->quantity, 2) }}
                                         </td>
                                         <td class="px-6 py-4 text-center">
-                                            <button onclick="removeItem({{ $item->id }})" class="text-red-500 hover:text-red-700 transition-colors">
+                                            <button onclick="showRemoveConfirmation({{ $item->id }})" class="text-red-500 hover:text-red-700 transition-colors">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
@@ -126,13 +126,9 @@
                                 </svg>
                                 Continue Shopping
                             </a>
-                            <form action="{{ route('cart.clear') }}" method="POST" onsubmit="return confirm('Are you sure you want to clear your entire cart?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700 transition-colors">
-                                    Clear Cart
-                                </button>
-                            </form>
+                            <button onclick="showClearCartConfirmation()" class="text-red-500 hover:text-red-700 transition-colors">
+                                Clear Cart
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -163,45 +159,10 @@
                             </div>
                         </div>
                         
-                        <!-- Promo Code -->
-                        <div class="mb-6">
-                            <label class="block text-purple-900 font-semibold mb-2">Promo Code</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="promoCode" placeholder="Enter code" class="flex-1 px-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:border-gold-400">
-                                <button onclick="applyPromo()" class="px-4 py-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition-colors">
-                                    Apply
-                                </button>
-                            </div>
-                        </div>
-                        
                         <!-- Checkout Button -->
                         <button onclick="proceedToCheckout()" class="w-full bg-gradient-to-r from-purple-900 to-purple-800 text-white py-3 rounded-lg hover:from-gold-500 hover:to-gold-600 hover:text-purple-900 transition-all duration-300 font-semibold">
                             Proceed to Checkout
                         </button>
-                        
-                        <!-- Payment Methods -->
-                        <div class="mt-6 pt-6 border-t border-purple-200">
-                            <p class="text-sm text-gray-500 text-center mb-3">We accept</p>
-                            <div class="flex justify-center gap-4">
-                                <svg class="w-10 h-6" viewBox="0 0 38 24" fill="none">
-                                    <rect width="38" height="24" rx="2" fill="#1A1F71"/>
-                                    <path d="M15 8h8v8h-8z" fill="#F5B800"/>
-                                    <path d="M23 8h8v8h-8z" fill="#D3D3D3"/>
-                                </svg>
-                                <svg class="w-10 h-6" viewBox="0 0 38 24" fill="none">
-                                    <rect width="38" height="24" rx="2" fill="#0066B3"/>
-                                    <text x="19" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">VISA</text>
-                                </svg>
-                                <svg class="w-10 h-6" viewBox="0 0 38 24" fill="none">
-                                    <rect width="38" height="24" rx="2" fill="#EB001B"/>
-                                    <text x="19" y="16" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Master</text>
-                                </svg>
-                                <svg class="w-10 h-6" viewBox="0 0 38 24" fill="none">
-                                    <rect width="38" height="24" rx="2" fill="#3C3A3E"/>
-                                    <text x="19" y="16" text-anchor="middle" fill="white" font-size="9" font-weight="bold">PayPal</text>
-                                </svg>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -209,6 +170,31 @@
     </div>
     
     @include('components.footer')
+    
+    <!-- Confirmation Modal for Remove Item -->
+    <div id="confirmModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="p-6">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Remove Item?</h3>
+                    <p class="text-gray-600">Are you sure you want to remove this item from your cart?</p>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="closeConfirmModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button id="confirmRemoveBtn" class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        Remove
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
@@ -219,6 +205,37 @@
     </div>
     
     <script>
+        let itemToRemove = null;
+        
+        // Show remove confirmation modal
+        function showRemoveConfirmation(itemId) {
+            itemToRemove = itemId;
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        
+        // Show clear cart confirmation
+        function showClearCartConfirmation() {
+            if (confirm('Are you sure you want to clear your entire cart? This action cannot be undone.')) {
+                clearCart();
+            }
+        }
+        
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            itemToRemove = null;
+        }
+        
+        document.getElementById('confirmRemoveBtn')?.addEventListener('click', function() {
+            if (itemToRemove) {
+                removeItem(itemToRemove);
+                closeConfirmModal();
+            }
+        });
+        
         function updateQuantity(itemId, newQuantity) {
             if (newQuantity < 1) return;
             
@@ -246,6 +263,7 @@
                     // Recalculate totals
                     recalculateTotals();
                     showToast(data.message, 'success');
+                    updateNavbarCartCount();
                 }
             })
             .catch(error => {
@@ -257,8 +275,6 @@
         }
         
         function removeItem(itemId) {
-            if (!confirm('Are you sure you want to remove this item?')) return;
-            
             showLoading();
             
             fetch(`/cart/remove/${itemId}`, {
@@ -270,18 +286,23 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Remove row
+                    // Remove row with animation
                     const row = document.querySelector(`tr[data-item-id="${itemId}"]`);
-                    row.remove();
+                    row.style.transition = 'opacity 0.3s';
+                    row.style.opacity = '0';
+                    setTimeout(() => {
+                        row.remove();
+                        
+                        // Check if cart is empty
+                        const remainingItems = document.querySelectorAll('.cart-item').length;
+                        if (remainingItems === 0) {
+                            window.location.reload();
+                        } else {
+                            recalculateTotals();
+                            updateNavbarCartCount();
+                        }
+                    }, 300);
                     
-                    // Check if cart is empty
-                    const remainingItems = document.querySelectorAll('.cart-item').length;
-                    if (remainingItems === 0) {
-                        window.location.reload();
-                    } else {
-                        recalculateTotals();
-                        updateNavbarCartCount();
-                    }
                     showToast(data.message, 'success');
                 }
             })
@@ -289,6 +310,31 @@
                 showToast('Error removing item', 'error');
             })
             .finally(() => {
+                hideLoading();
+            });
+        }
+        
+        function clearCart() {
+            showLoading();
+            
+            fetch(`/cart/clear`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+            })
+            .catch(error => {
+                showToast('Error clearing cart', 'error');
                 hideLoading();
             });
         }
@@ -310,49 +356,33 @@
         }
         
         function updateNavbarCartCount() {
-            fetch('{{ route("cart.count") }}')
+            fetch('/cart/count')
                 .then(response => response.json())
                 .then(data => {
-                    const cartBadge = document.getElementById('cartCount');
-                    if (cartBadge) {
-                        cartBadge.textContent = data.count;
+                    if (typeof updateCartCount === 'function') {
+                        updateCartCount(data.count);
                     }
-                });
-        }
-        
-        function applyPromo() {
-            const promoCode = document.getElementById('promoCode').value;
-            if (!promoCode) {
-                showToast('Please enter a promo code', 'error');
-                return;
-            }
-            
-            // This is a placeholder - implement actual promo logic
-            if (promoCode.toUpperCase() === 'WELCOME10') {
-                showToast('10% discount applied!', 'success');
-                // Update totals with discount
-            } else {
-                showToast('Invalid promo code', 'error');
-            }
+                })
+                .catch(error => console.error('Error fetching cart count:', error));
         }
         
         function proceedToCheckout() {
-            // This will be implemented when creating the checkout page
             showToast('Checkout page coming soon!', 'success');
         }
         
         function showLoading() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-            document.getElementById('loadingOverlay').classList.add('flex');
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
         }
         
         function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-            document.getElementById('loadingOverlay').classList.remove('flex');
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
         }
         
         function showToast(message, type = 'success') {
-            // Create toast element if it doesn't exist
             let toast = document.getElementById('toast');
             if (!toast) {
                 toast = document.createElement('div');
@@ -374,6 +404,13 @@
                 toast.classList.add('hidden');
             }, 3000);
         }
+        
+        // Close modal when clicking outside
+        document.getElementById('confirmModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConfirmModal();
+            }
+        });
     </script>
     
     <style>
@@ -386,7 +423,7 @@
         }
         
         .cart-item {
-            transition: background-color 0.3s ease;
+            transition: opacity 0.3s ease;
         }
     </style>
 </body>

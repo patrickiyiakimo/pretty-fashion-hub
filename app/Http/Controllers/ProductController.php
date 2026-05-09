@@ -69,8 +69,20 @@ class ProductController extends Controller
         // Check if product already in cart
         $existingCart = Cart::where('user_id', Auth::id())
             ->where('product_id', $request->product_id)
-            ->where('size', $request->size)
-            ->where('color', $request->color)
+            ->where(function($query) use ($request) {
+                if ($request->size) {
+                    $query->where('size', $request->size);
+                } else {
+                    $query->whereNull('size');
+                }
+            })
+            ->where(function($query) use ($request) {
+                if ($request->color) {
+                    $query->where('color', $request->color);
+                } else {
+                    $query->whereNull('color');
+                }
+            })
             ->first();
             
         if ($existingCart) {

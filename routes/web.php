@@ -10,6 +10,11 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// Collections page
+Route::get('/collections', function () {
+    return view('collections');
+})->name('collections');
+
 // Shop routes (public)
 Route::get('/shop', [ProductController::class, 'shop'])->name('shop');
 Route::get('/product/{slug}', [ProductController::class, 'productDetail'])->name('product.detail');
@@ -24,14 +29,11 @@ Route::middleware('guest')->group(function () {
 
 // Protected Routes (authenticated users only)
 Route::middleware('auth')->group(function () {
-    // Cart routes
-    Route::get('/cart', [CartController::class, 'cart'])->name('cart');
     Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-    Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count'); // Add this line
-    
-    // Logout
+    Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
