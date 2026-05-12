@@ -30,13 +30,13 @@
         
         @if($cartItems->isEmpty())
             <!-- Empty Cart -->
-            <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
+            <div class="bg-white p-12 text-center">
                 <div class="mb-6">
-                    <svg class="w-32 h-32 mx-auto text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-32 h-32 mx-auto text-pink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6m10-6l1.5 6m-8.5 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm9 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"></path>
                     </svg>
                 </div>
-                <h2 class="text-2xl font-bold text-purple-900 mb-4">Your cart is empty</h2>
+                <h2 class="text-2xl font-bold text-pink-900 mb-4">Your cart is empty</h2>
                 <p class="text-gray-600 mb-8">Looks like you haven't added any items to your cart yet.</p>
                 <a href="{{ route('shop') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-pink-950 via-pink-900 to-pink-950 text-white hover:from-gold-500 hover:to-gold-600 hover:text-purple-900 transition-all duration-300 font-semibold">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,10 +185,10 @@
                     <p class="text-gray-600">Are you sure you want to remove this item from your cart?</p>
                 </div>
                 <div class="flex gap-4">
-                    <button onclick="closeConfirmModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                    <button onclick="closeConfirmModal()" class="flex-1 px-4 py-2 border border-gray-300  text-gray-700 hover:bg-gray-50 transition-colors">
                         Cancel
                     </button>
-                    <button id="confirmRemoveBtn" class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                    <button id="confirmRemoveBtn" class="flex-1 px-4 py-2 bg-red-500 text-white  hover:bg-red-600 transition-colors">
                         Remove
                     </button>
                 </div>

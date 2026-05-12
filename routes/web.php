@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Home page
@@ -39,6 +40,20 @@ Route::middleware('guest')->group(function () {
 
 // Protected Routes (authenticated users only)
 Route::middleware('auth')->group(function () {
+    // Profile routes
+    Route::get('/profile', function () {
+        return view('profile');
+    })->name('profile');
+    
+    Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+    Route::get('/profile/orders', [ProfileController::class, 'getOrders'])->name('profile.orders');
+    Route::get('/profile/addresses', [ProfileController::class, 'getAddresses'])->name('profile.addresses');
+    Route::post('/profile/addresses', [ProfileController::class, 'addAddress'])->name('profile.add-address');
+    Route::put('/profile/addresses/{id}/default', [ProfileController::class, 'setDefaultAddress'])->name('profile.set-default-address');
+    Route::delete('/profile/addresses/{id}', [ProfileController::class, 'deleteAddress'])->name('profile.delete-address');
+    
+    // Cart routes
     Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
