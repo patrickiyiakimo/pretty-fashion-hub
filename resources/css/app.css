@@ -1,3 +1,209 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+    /* E-commerce optimized font stack */
+    html {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', sans-serif;
+        scroll-behavior: smooth;
+    }
+    
+    body {
+        @apply bg-white text-gray-900;
+    }
+    
+    /* Focus styles for accessibility - using pink-800 */
+    *:focus {
+        @apply outline-none ring-2 ring-pink-800 ring-offset-2;
+    }
+    
+    /* Selection highlight - pink-800 */
+    ::selection {
+        @apply bg-pink-800 text-white;
+    }
+    
+    ::-moz-selection {
+        @apply bg-pink-800 text-white;
+    }
+}
+
+/* Custom component classes */
+@layer components {
+    /* Pink-800 highlight for links and interactive elements */
+    .highlight-link {
+        @apply text-pink-800 hover:text-pink-700 transition-colors duration-300;
+    }
+    
+    /* Primary button with pink-800 */
+    .btn-primary {
+        @apply bg-pink-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-700 transition-all duration-300 transform hover:scale-105 focus:ring-2 focus:ring-pink-800 focus:ring-offset-2;
+    }
+    
+    /* Secondary button */
+    .btn-secondary {
+        @apply border-2 border-pink-800 text-pink-800 px-6 py-3 rounded-lg font-semibold hover:bg-pink-800 hover:text-white transition-all duration-300;
+    }
+    
+    /* Card hover effect with pink-800 border */
+    .product-card-hover {
+        @apply transition-all duration-300 hover:shadow-xl hover:border-pink-800 border border-transparent;
+    }
+    
+    /* Section titles with pink-800 accent */
+    .section-title {
+        @apply text-3xl md:text-4xl font-bold text-gray-900 mb-4 relative inline-block;
+    }
+    
+    .section-title::after {
+        content: '';
+        @apply absolute bottom-[-10px] left-0 w-full h-1 bg-pink-800 rounded-full;
+    }
+    
+    /* Price tag styling */
+    .price-tag {
+        @apply text-2xl font-bold text-pink-800;
+    }
+    
+    /* Sale badge */
+    .sale-badge {
+        @apply bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold;
+    }
+    
+    /* New arrival badge */
+    .new-badge {
+        @apply bg-pink-800 text-white px-3 py-1 rounded-full text-sm font-bold;
+    }
+    
+    /* Input focus ring - pink-800 */
+    .input-focus {
+        @apply focus:ring-2 focus:ring-pink-800 focus:border-pink-800 focus:outline-none;
+    }
+}
+
+/* Custom utilities */
+@layer utilities {
+    /* Pink-800 gradient backgrounds */
+    .bg-gradient-pink {
+        @apply bg-gradient-to-r from-pink-800 to-pink-600;
+    }
+    
+    /* Text gradient with pink-800 */
+    .text-gradient-pink {
+        @apply bg-gradient-to-r from-pink-800 to-pink-600 bg-clip-text text-transparent;
+    }
+    
+    /* Hover underline animation with pink-800 */
+    .hover-underline-pink {
+        @apply relative inline-block;
+    }
+    
+    .hover-underline-pink::after {
+        content: '';
+        @apply absolute bottom-0 left-0 w-0 h-0.5 bg-pink-800 transition-all duration-300;
+    }
+    
+    .hover-underline-pink:hover::after {
+        @apply w-full;
+    }
+    
+    /* Custom scrollbar with pink-800 */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        @apply bg-gray-100 rounded;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-pink-800 rounded hover:bg-pink-700;
+    }
+}
+
+/* Global scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-pink-800 rounded-full hover:bg-pink-700;
+}
+
+/* Animation for cart count */
+@keyframes cartPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.cart-updated {
+    animation: cartPulse 0.3s ease-in-out;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    animation: spin 0.8s linear infinite;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Skeleton loading animation */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* Responsive font sizes for better e-commerce readability */
+@media (max-width: 640px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1280px) {
+    html {
+        font-size: 16px;
+    }
+}
+

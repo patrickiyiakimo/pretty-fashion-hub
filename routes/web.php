@@ -15,6 +15,16 @@ Route::get('/collections', function () {
     return view('collections');
 })->name('collections');
 
+// About page
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+// Contact page
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
 // Shop routes (public)
 Route::get('/shop', [ProductController::class, 'shop'])->name('shop');
 Route::get('/product/{slug}', [ProductController::class, 'productDetail'])->name('product.detail');

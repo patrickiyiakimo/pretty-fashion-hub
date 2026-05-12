@@ -14,7 +14,7 @@
     @include('components.navbar')
     
     <!-- Page Header -->
-    <div class="bg-gradient-to-r from-purple-900 to-purple-800 text-white py-20">
+    <div class="bg-gradient-to-r from-pink-950 via-pink-900 to-pink-950 text-white py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fade-in-up">Our Collections</h1>
             <p class="text-purple-200 text-lg md:text-xl max-w-2xl mx-auto animate-fade-in-up animation-delay-200">
@@ -292,21 +292,6 @@
         </div>
     </div>
 
-    <!-- Newsletter Section -->
-    <div class="bg-gradient-to-r from-purple-900 to-purple-800 py-16">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold text-white mb-4">Subscribe to Our Newsletter</h2>
-            <p class="text-purple-200 mb-8">Get exclusive offers, early access to new collections, and style tips</p>
-            <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <input type="email" placeholder="Enter your email" 
-                       class="flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-400">
-                <button type="submit" class="px-6 py-3 bg-gold-500 text-purple-900 rounded-lg font-semibold hover:bg-gold-600 transition-colors">
-                    Subscribe
-                </button>
-            </form>
-        </div>
-    </div>
-
     @include('components.footer')
 
     <style>
@@ -341,18 +326,6 @@
             });
         });
         
-        // Newsletter form submission
-        const newsletterForm = document.querySelector('.max-w-md');
-        if (newsletterForm) {
-            newsletterForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const email = this.querySelector('input[type="email"]').value;
-                if (email) {
-                    alert('Thank you for subscribing!');
-                    this.querySelector('input[type="email"]').value = '';
-                }
-            });
-        }
     </script>
 </body>
 </html>

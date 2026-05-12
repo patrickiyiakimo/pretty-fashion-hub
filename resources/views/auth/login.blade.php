@@ -17,7 +17,7 @@
             <div class="grid md:grid-cols-2 h-full">
                 <!-- Left Side: Form - No padding -->
                 <div class="flex items-center justify-center bg-gradient-to-br from-purple-50 to-white">
-                    <div class="w-full">
+                    <div class="w-full px-8">
                         <div class="text-center mb-8">
                             <a href="/" class="text-3xl font-bold bg-gradient-to-r from-purple-900 to-purple-700 text-transparent bg-clip-text">
                                 Pretty Fashion Hub

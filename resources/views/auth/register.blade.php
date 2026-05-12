@@ -10,14 +10,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-white overflow-hidden">
+<body class="font-sans antialiased bg-white overflow-hidden ">
     
     <div class="min-h-screen w-full flex items-center justify-center">
         <div class="w-full h-screen bg-white overflow-hidden">
             <div class="grid md:grid-cols-2 h-full">
                 <!-- Left Side: Form - Centered with limited width but no outer padding -->
                 <div class="flex items-center justify-center bg-gradient-to-br from-purple-50 to-white">
-                    <div class="w-full max-w-md px-8">
+                    <div class="w-full px-8">
                         <div class="text-center mb-8">
                             <a href="/" class="text-3xl font-bold bg-gradient-to-r from-purple-900 to-purple-700 text-transparent bg-clip-text">
                                 Pretty Fashion Hub

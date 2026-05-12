@@ -14,7 +14,7 @@
     @include('components.navbar')
     
     <!-- Page Header -->
-    <div class="bg-gradient-to-r from-purple-900 to-purple-800 text-white py-16">
+    <div class="bg-gradient-to-r from-pink-950 via-pink-900 to-pink-950 text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">Our Collection</h1>
             <p class="text-purple-200 text-lg">Discover elegance in every piece</p>
@@ -26,7 +26,7 @@
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Sidebar Filters -->
             <div class="lg:w-1/4">
-                <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+                <div class="bg-white  shadow-lg p-6 sticky top-24">
                     <h3 class="text-lg font-bold text-purple-900 mb-4">Filters</h3>
                     
                     <!-- Category Filter -->
@@ -83,10 +83,22 @@
                         // Decode JSON arrays
                         $productImages = is_string($product->images) ? json_decode($product->images, true) : $product->images;
                         $productColors = is_string($product->colors) ? json_decode($product->colors, true) : $product->colors;
+                        $productSizes = is_string($product->sizes) ? json_decode($product->sizes, true) : $product->sizes;
                         $firstImage = is_array($productImages) && !empty($productImages) ? $productImages[0] : 'https://via.placeholder.com/400x500?text=No+Image';
                     @endphp
-                    <div class="product-card group" data-price="{{ $product->price }}" data-category="{{ $product->category }}" data-date="{{ $product->created_at }}" data-id="{{ $product->id }}" data-name="{{ $product->name }}" data-description="{{ $product->description }}" data-compare-price="{{ $product->compare_price }}" data-images="{{ json_encode($productImages) }}" data-colors="{{ json_encode($productColors) }}" data-sizes="{{ json_encode(is_string($product->sizes) ? json_decode($product->sizes, true) : $product->sizes) }}" data-stock="{{ $product->stock }}">
-                        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="product-card group" 
+                         data-price="{{ $product->price }}" 
+                         data-category="{{ $product->category }}" 
+                         data-date="{{ $product->created_at }}" 
+                         data-id="{{ $product->id }}" 
+                         data-name="{{ addslashes($product->name) }}" 
+                         data-description="{{ addslashes($product->description) }}" 
+                         data-compare-price="{{ $product->compare_price }}" 
+                         data-images='{{ json_encode($productImages) }}' 
+                         data-colors='{{ json_encode($productColors) }}' 
+                         data-sizes='{{ json_encode($productSizes) }}' 
+                         data-stock="{{ $product->stock }}">
+                        <div class="bg-white overflow-hidden shadow-md transition-all duration-300 transform hover:-translate-y-2">
                             <!-- Product Image -->
                             <div class="relative overflow-hidden bg-purple-100 h-80">
                                 <img src="{{ $firstImage }}" 
@@ -103,12 +115,6 @@
                                 @if($product->new_arrival)
                                 <div class="absolute top-4 right-4 bg-gold-500 text-purple-900 px-3 py-1 rounded-full text-sm font-bold">
                                     NEW
-                                </div>
-                                @endif
-                                
-                                @if($product->compare_price && $product->compare_price > $product->price)
-                                <div class="absolute bottom-4 left-4 bg-purple-900 text-white px-3 py-1 rounded-full text-sm font-bold">
-                                    -{{ $product->discounted_percentage }}%
                                 </div>
                                 @endif
                                 
@@ -151,7 +157,7 @@
                                 </div>
                                 @endif
                                 
-                                <button onclick="addToCart({{ $product->id }})" class="w-full bg-gradient-to-r from-purple-900 to-purple-800 text-white py-3 rounded-xl hover:from-gold-500 hover:to-gold-600 hover:text-purple-900 transition-all duration-300 font-semibold">
+                                <button onclick="addToCart({{ $product->id }})" class="add-to-cart-btn w-full bg-gradient-to-r from-pink-950 via-pink-900 to-pink-950 text-white py-3 hover:from-gold-500 hover:to-gold-600 hover:text-purple-900 transition-all duration-300 font-semibold">
                                     Add to Cart
                                 </button>
                             </div>
@@ -161,7 +167,7 @@
                 </div>
                 
                 <!-- Pagination -->
-                <div class="mt-12">
+                <div class="mt-12 ">
                     {{ $products->links() }}
                 </div>
             </div>
@@ -178,291 +184,379 @@
     </div>
     
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-8 right-8 bg-purple-900 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50">
+    <div id="toast" class="fixed bottom-8 right-8 z-50 hidden">
         <span id="toastMessage"></span>
     </div>
     
-    <script>
-        // Build products data from DOM elements
-        const productsData = {};
-        document.querySelectorAll('.product-card').forEach(card => {
-            const id = parseInt(card.dataset.id);
-            productsData[id] = {
-                id: id,
-                name: card.dataset.name,
-                description: card.dataset.description,
-                price: parseFloat(card.dataset.price),
-                compare_price: card.dataset.comparePrice ? parseFloat(card.dataset.comparePrice) : null,
-                images: JSON.parse(card.dataset.images || '[]'),
-                sizes: JSON.parse(card.dataset.sizes || '[]'),
-                colors: JSON.parse(card.dataset.colors || '[]'),
-                stock: parseInt(card.dataset.stock),
-                category: card.dataset.category
-            };
+   <script>
+    // Build products data from DOM elements
+    const productsData = {};
+    document.querySelectorAll('.product-card').forEach(card => {
+        const id = parseInt(card.dataset.id);
+        productsData[id] = {
+            id: id,
+            name: card.dataset.name,
+            description: card.dataset.description,
+            price: parseFloat(card.dataset.price),
+            compare_price: card.dataset.comparePrice ? parseFloat(card.dataset.comparePrice) : null,
+            images: JSON.parse(card.dataset.images || '[]'),
+            sizes: JSON.parse(card.dataset.sizes || '[]'),
+            colors: JSON.parse(card.dataset.colors || '[]'),
+            stock: parseInt(card.dataset.stock),
+            category: card.dataset.category
+        };
+    });
+    
+    let currentProductData = null;
+    let selectedSize = null;
+    let selectedColor = null;
+    
+    // Show toast notification
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        if (!toast || !toastMessage) {
+            console.log(message);
+            return;
+        }
+        
+        toastMessage.textContent = message;
+        toast.classList.remove('hidden');
+        
+        toast.style.backgroundColor = type === 'error' ? '#dc2626' : '#9d174d';
+        toast.style.color = 'white';
+        toast.style.padding = '12px 24px';
+        toast.style.borderRadius = '8px';
+        toast.style.fontSize = '14px';
+        toast.style.fontWeight = '500';
+        toast.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+        toast.style.minWidth = '200px';
+        toast.style.textAlign = 'center';
+        
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 3000);
+    }
+    
+    // Update cart count in navbar
+    function updateCartCount(count) {
+        const cartCountElement = document.getElementById('cartCount');
+        if (cartCountElement) {
+            cartCountElement.textContent = count;
+        }
+        const mobileWishlistCount = document.getElementById('mobileWishlistCount');
+        if (mobileWishlistCount) {
+            mobileWishlistCount.textContent = count;
+        }
+    }
+    
+    // Add to Cart function
+    window.addToCart = async function(productId, size = null, color = null, quantity = 1) {
+        // Find and disable the button that was clicked
+        const buttons = document.querySelectorAll(`button[onclick*="addToCart(${productId})"]`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            btn.innerHTML = 'Adding...';
         });
         
-        let currentProductData = null;
-        let selectedSize = null;
-        let selectedColor = null;
-        
-        // Add to Cart function with auth check
-       function addToCart(productId, size = null, color = null, quantity = 1) {
-    fetch('{{ route("cart.add") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({
-            product_id: productId,
-            size: size,
-            color: color,
-            quantity: quantity
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showToast(data.message, 'success');
-            updateCartCount(data.cart_count);
-            closeModal();
-        } else if (data.redirect) {
-            window.location.href = data.redirect;
-        } else {
-            showToast(data.message, 'error');
+        try {
+            const response = await fetch('{{ route("cart.add") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    size: size,
+                    color: color,
+                    quantity: quantity
+                })
+            });
+            
+            const data = await response.json();
+            
+            // Re-enable buttons
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.innerHTML = 'Add to Cart';
+            });
+            
+            if (response.status === 401 || (data.redirect && !data.success)) {
+                showToast('Please login to add items to cart', 'error');
+                setTimeout(() => {
+                    window.location.href = data.redirect || '{{ route("login") }}';
+                }, 1500);
+                return;
+            }
+            
+            if (data.success) {
+                showToast(data.message, 'success');
+                updateCartCount(data.cart_count);
+                if (typeof closeModal === 'function') {
+                    closeModal();
+                }
+            } else {
+                showToast(data.message || 'Something went wrong', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.innerHTML = 'Add to Cart';
+            });
+            showToast('Network error. Please try again.', 'error');
         }
-    })
-    .catch(error => {
-        showToast('Error adding to cart', 'error');
-    });
-}
+    };
+    
+    // Quick View function
+    window.quickView = function(productId) {
+        showProductModal(productId);
+    };
+    
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Show product modal
+    window.showProductModal = function(productId) {
+        currentProductData = productsData[productId];
+        if (!currentProductData) return;
         
-        function showProductModal(productId) {
-            currentProductData = productsData[productId];
-            if (!currentProductData) return;
-            
-            const modal = document.getElementById('productModal');
-            const modalContent = document.getElementById('modalContent');
-            
-            let sizesHtml = '';
-            if (currentProductData.sizes && currentProductData.sizes.length > 0) {
-                sizesHtml = `
-                    <div class="mb-6">
-                        <label class="block text-purple-900 font-semibold mb-2">Select Size</label>
-                        <div class="flex gap-2 flex-wrap">
-                            ${currentProductData.sizes.map(size => `
-                                <button onclick="selectSize('${size}')" class="size-option px-4 py-2 border border-purple-200 rounded-lg hover:border-gold-400 transition-colors">
-                                    ${size}
-                                </button>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-            
-            let colorsHtml = '';
-            if (currentProductData.colors && currentProductData.colors.length > 0) {
-                colorsHtml = `
-                    <div class="mb-6">
-                        <label class="block text-purple-900 font-semibold mb-2">Select Color</label>
-                        <div class="flex gap-3 flex-wrap">
-                            ${currentProductData.colors.map(color => `
-                                <button onclick="selectColor('${color}')" class="color-option w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gold-400" style="background-color: ${color};"></button>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-            
-            const productImage = currentProductData.images && currentProductData.images.length > 0 
-                ? currentProductData.images[0] 
-                : 'https://via.placeholder.com/400x500?text=No+Image';
-            
-            modalContent.innerHTML = `
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <h2 class="text-2xl font-bold text-purple-900">${currentProductData.name}</h2>
-                        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <img src="${productImage}" alt="${currentProductData.name}" class="w-full rounded-lg">
-                        </div>
-                        <div>
-                            <div class="mb-4">
-                                <div class="text-3xl font-bold text-purple-900">$${currentProductData.price}</div>
-                                ${currentProductData.compare_price ? `<div class="text-gray-400 line-through">$${currentProductData.compare_price}</div>` : ''}
-                            </div>
-                            
-                            <p class="text-gray-600 mb-6">${currentProductData.description}</p>
-                            
-                            ${sizesHtml}
-                            ${colorsHtml}
-                            
-                            <div class="mb-6">
-                                <label class="block text-purple-900 font-semibold mb-2">Quantity</label>
-                                <input type="number" id="quantity" value="1" min="1" max="${currentProductData.stock}" class="w-24 px-3 py-2 border border-purple-200 rounded-lg">
-                            </div>
-                            
-                            <button onclick="addToCartFromModal()" class="w-full bg-gradient-to-r from-purple-900 to-purple-800 text-white py-3 rounded-xl hover:from-gold-500 hover:to-gold-600 transition-all duration-300 font-semibold">
-                                Add to Cart
+        const modal = document.getElementById('productModal');
+        const modalContent = document.getElementById('modalContent');
+        
+        if (!modal || !modalContent) return;
+        
+        let sizesHtml = '';
+        if (currentProductData.sizes && currentProductData.sizes.length > 0) {
+            sizesHtml = `
+                <div class="mb-6">
+                    <label class="block text-purple-900 font-semibold mb-2">Select Size</label>
+                    <div class="flex gap-2 flex-wrap">
+                        ${currentProductData.sizes.map(size => `
+                            <button onclick="window.selectSize('${size.replace(/'/g, "\\'")}')" class="size-option px-4 py-2 border border-purple-200 rounded-lg hover:border-gold-400 transition-colors">
+                                ${size}
                             </button>
-                        </div>
+                        `).join('')}
                     </div>
                 </div>
             `;
-            
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
         }
         
-        function selectSize(size) {
-            selectedSize = size;
-            document.querySelectorAll('.size-option').forEach(btn => {
-                btn.classList.remove('border-gold-400', 'bg-gold-50');
-                if (btn.innerText === size) {
-                    btn.classList.add('border-gold-400', 'bg-gold-50');
-                }
-            });
+        let colorsHtml = '';
+        if (currentProductData.colors && currentProductData.colors.length > 0) {
+            colorsHtml = `
+                <div class="mb-6">
+                    <label class="block text-purple-900 font-semibold mb-2">Select Color</label>
+                    <div class="flex gap-3 flex-wrap">
+                        ${currentProductData.colors.map(color => `
+                            <button onclick="window.selectColor('${color.replace(/'/g, "\\'")}')" class="color-option w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gold-400" style="background-color: ${color};"></button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
         }
         
-        function selectColor(color) {
-            selectedColor = color;
-            document.querySelectorAll('.color-option').forEach(btn => {
-                btn.classList.remove('ring-2', 'ring-gold-400');
-                if (btn.style.backgroundColor === color) {
-                    btn.classList.add('ring-2', 'ring-gold-400');
-                }
-            });
-        }
+        const productImage = currentProductData.images && currentProductData.images.length > 0 
+            ? currentProductData.images[0] 
+            : 'https://via.placeholder.com/400x500?text=No+Image';
         
-        function addToCartFromModal() {
-            const quantity = document.getElementById('quantity').value;
-            addToCart(currentProductData.id, selectedSize, selectedColor, parseInt(quantity));
-        }
+        modalContent.innerHTML = `
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-2xl font-bold text-purple-900">${escapeHtml(currentProductData.name)}</h2>
+                    <button onclick="window.closeModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <img src="${productImage}" alt="${escapeHtml(currentProductData.name)}" class="w-full rounded-lg">
+                    </div>
+                    <div>
+                        <div class="mb-4">
+                            <div class="text-3xl font-bold text-purple-900">$${currentProductData.price.toFixed(2)}</div>
+                            ${currentProductData.compare_price ? `<div class="text-gray-400 line-through">$${currentProductData.compare_price.toFixed(2)}</div>` : ''}
+                        </div>
+                        
+                        <p class="text-gray-600 mb-6">${escapeHtml(currentProductData.description || 'No description available.')}</p>
+                        
+                        ${sizesHtml}
+                        ${colorsHtml}
+                        
+                        <div class="mb-6">
+                            <label class="block text-purple-900 font-semibold mb-2">Quantity</label>
+                            <input type="number" id="modalQuantity" value="1" min="1" max="${currentProductData.stock}" class="w-24 px-3 py-2 border border-purple-200 rounded-lg">
+                        </div>
+                        
+                        <button onclick="window.addToCartFromModal()" class="w-full bg-gradient-to-r from-purple-900 to-purple-800 text-white py-3 rounded-xl hover:from-gold-500 hover:to-gold-600 transition-all duration-300 font-semibold">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
         
-        function closeModal() {
-            const modal = document.getElementById('productModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            selectedSize = null;
-            selectedColor = null;
-        }
-        
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            
-            toastMessage.textContent = message;
-            toast.classList.remove('hidden');
-            
-            if (type === 'error') {
-                toast.classList.add('bg-red-500');
-                toast.classList.remove('bg-purple-900');
-            } else {
-                toast.classList.add('bg-purple-900');
-                toast.classList.remove('bg-red-500');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        selectedSize = null;
+        selectedColor = null;
+    };
+    
+    // Select size in modal
+    window.selectSize = function(size) {
+        selectedSize = size;
+        document.querySelectorAll('.size-option').forEach(btn => {
+            btn.classList.remove('border-gold-400', 'bg-gold-50');
+            if (btn.innerText === size || btn.textContent === size) {
+                btn.classList.add('border-gold-400', 'bg-gold-50');
             }
-            
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 3000);
-        }
-        
-        function updateCartCount(count) {
-            const cartCountElement = document.getElementById('cartCount');
-            if (cartCountElement) {
-                cartCountElement.textContent = count;
-            }
-        }
-        
-        function quickView(productId) {
-            showProductModal(productId);
-        }
-        
-        // Filter functionality
-        document.querySelectorAll('input[name="category"]').forEach(radio => {
-            radio.addEventListener('change', filterProducts);
         });
-        
-        document.getElementById('sortBy').addEventListener('change', filterProducts);
-        
-        let currentMinPrice = 0;
-        let currentMaxPrice = 500;
-        
-        const priceRange = document.getElementById('priceRange');
-        if (priceRange) {
-            priceRange.addEventListener('input', function(e) {
-                currentMaxPrice = parseInt(e.target.value);
-                document.getElementById('maxPrice').textContent = currentMaxPrice;
-                filterProducts();
-            });
-        }
-        
-        const resetBtn = document.getElementById('resetFilters');
-        if (resetBtn) {
-            resetBtn.addEventListener('click', function() {
-                const allRadio = document.querySelector('input[value="all"]');
-                if (allRadio) allRadio.checked = true;
-                const sortSelect = document.getElementById('sortBy');
-                if (sortSelect) sortSelect.value = 'default';
-                if (priceRange) priceRange.value = 500;
-                currentMaxPrice = 500;
-                document.getElementById('maxPrice').textContent = '500';
-                filterProducts();
-            });
-        }
-        
-        function filterProducts() {
-            const selectedCategory = document.querySelector('input[name="category"]:checked')?.value || 'all';
-            const sortBy = document.getElementById('sortBy')?.value || 'default';
-            
-            let products = Array.from(document.querySelectorAll('.product-card'));
-            
-            // Filter by category
-            if (selectedCategory !== 'all') {
-                products = products.filter(product => 
-                    product.dataset.category === selectedCategory
-                );
+    };
+    
+    // Select color in modal
+    window.selectColor = function(color) {
+        selectedColor = color;
+        document.querySelectorAll('.color-option').forEach(btn => {
+            btn.classList.remove('ring-2', 'ring-gold-400');
+            if (btn.style.backgroundColor === color) {
+                btn.classList.add('ring-2', 'ring-gold-400');
             }
-            
-            // Filter by price
-            products = products.filter(product => {
-                const price = parseFloat(product.dataset.price);
-                return price >= currentMinPrice && price <= currentMaxPrice;
-            });
-            
-            // Sort products
-            if (sortBy === 'price_low') {
-                products.sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
-            } else if (sortBy === 'price_high') {
-                products.sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
-            } else if (sortBy === 'newest') {
-                products.sort((a, b) => new Date(b.dataset.date) - new Date(a.dataset.date));
-            }
-            
-            // Update display
-            const grid = document.getElementById('productsGrid');
-            if (grid) {
-                grid.innerHTML = '';
-                products.forEach(product => grid.appendChild(product));
-            }
-        }
-        
-        // Close modal on outside click
+        });
+    };
+    
+    // Add to cart from modal
+    window.addToCartFromModal = function() {
+        if (!currentProductData) return;
+        const quantityInput = document.getElementById('modalQuantity');
+        const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+        window.addToCart(currentProductData.id, selectedSize, selectedColor, quantity);
+    };
+    
+    // Close modal
+    window.closeModal = function() {
         const modal = document.getElementById('productModal');
         if (modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeModal();
-                }
-            });
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
-    </script>
+        selectedSize = null;
+        selectedColor = null;
+        currentProductData = null;
+    };
+    
+    // Filter functionality
+    function filterProducts() {
+        const selectedCategory = document.querySelector('input[name="category"]:checked')?.value || 'all';
+        const sortBy = document.getElementById('sortBy')?.value || 'default';
+        
+        let products = Array.from(document.querySelectorAll('.product-card'));
+        
+        if (selectedCategory !== 'all') {
+            products = products.filter(product => 
+                product.dataset.category === selectedCategory
+            );
+        }
+        
+        const currentMaxPrice = parseInt(document.getElementById('priceRange')?.value || 500);
+        
+        products = products.filter(product => {
+            const price = parseFloat(product.dataset.price);
+            return price >= 0 && price <= currentMaxPrice;
+        });
+        
+        if (sortBy === 'price_low') {
+            products.sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+        } else if (sortBy === 'price_high') {
+            products.sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
+        } else if (sortBy === 'newest') {
+            products.sort((a, b) => new Date(b.dataset.date) - new Date(a.dataset.date));
+        }
+        
+        const grid = document.getElementById('productsGrid');
+        if (grid) {
+            grid.innerHTML = '';
+            products.forEach(product => grid.appendChild(product));
+        }
+    }
+    
+    // Set up event listeners
+    document.querySelectorAll('input[name="category"]').forEach(radio => {
+        radio.addEventListener('change', filterProducts);
+    });
+    
+    const sortSelect = document.getElementById('sortBy');
+    if (sortSelect) sortSelect.addEventListener('change', filterProducts);
+    
+    const priceRange = document.getElementById('priceRange');
+    if (priceRange) {
+        priceRange.addEventListener('input', function(e) {
+            document.getElementById('maxPrice').textContent = e.target.value;
+            filterProducts();
+        });
+    }
+    
+    const resetBtn = document.getElementById('resetFilters');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            const allRadio = document.querySelector('input[value="all"]');
+            if (allRadio) allRadio.checked = true;
+            if (sortSelect) sortSelect.value = 'default';
+            if (priceRange) priceRange.value = 500;
+            document.getElementById('maxPrice').textContent = '500';
+            filterProducts();
+        });
+    }
+    
+    // Close modal on outside click
+    const modalElement = document.getElementById('productModal');
+    if (modalElement) {
+        modalElement.addEventListener('click', function(e) {
+            if (e.target === modalElement) {
+                window.closeModal();
+            }
+        });
+    }
+    
+    // Initialize cart count from server
+    function updateCartCountFromServer() {
+        @auth
+        fetch('/cart/count', {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.count !== undefined) {
+                updateCartCount(data.count);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching cart count:', error);
+            updateCartCount(0);
+        });
+        @else
+        updateCartCount(0);
+        @endauth
+    }
+    
+    // Call on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCartCountFromServer();
+    });
+</script>
 </body>
 </html>

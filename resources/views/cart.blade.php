@@ -14,7 +14,7 @@
     @include('components.navbar')
     
     <!-- Page Header -->
-    <div class="bg-gradient-to-r from-purple-900 to-purple-800 text-white py-16">
+    <div class="bg-gradient-to-r from-pink-950 via-pink-900 to-pink-950 text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">Shopping Cart</h1>
             <p class="text-purple-200 text-lg">Review and manage your items</p>
@@ -38,7 +38,7 @@
                 </div>
                 <h2 class="text-2xl font-bold text-purple-900 mb-4">Your cart is empty</h2>
                 <p class="text-gray-600 mb-8">Looks like you haven't added any items to your cart yet.</p>
-                <a href="{{ route('shop') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-900 to-purple-800 text-white rounded-lg hover:from-gold-500 hover:to-gold-600 hover:text-purple-900 transition-all duration-300 font-semibold">
+                <a href="{{ route('shop') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-pink-950 via-pink-900 to-pink-950 text-white hover:from-gold-500 hover:to-gold-600 hover:text-purple-900 transition-all duration-300 font-semibold">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
@@ -49,16 +49,16 @@
             <div class="flex flex-col lg:flex-row gap-8">
                 <!-- Cart Items -->
                 <div class="lg:w-2/3">
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-white shadow-lg overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full">
-                                <thead class="bg-purple-50 border-b border-purple-200">
+                                <thead class="bg-pink-50 border-b border-purple-200">
                                     <tr>
-                                        <th class="px-6 py-4 text-left text-purple-900 font-semibold">Product</th>
-                                        <th class="px-6 py-4 text-center text-purple-900 font-semibold">Price</th>
-                                        <th class="px-6 py-4 text-center text-purple-900 font-semibold">Quantity</th>
-                                        <th class="px-6 py-4 text-center text-purple-900 font-semibold">Total</th>
-                                        <th class="px-6 py-4 text-center text-purple-900 font-semibold">Action</th>
+                                        <th class="px-6 py-4 text-left text-pink-900 font-semibold">Product</th>
+                                        <th class="px-6 py-4 text-center text-pink-900 font-semibold">Price</th>
+                                        <th class="px-6 py-4 text-center text-pink-900 font-semibold">Quantity</th>
+                                        <th class="px-6 py-4 text-center text-pink-900 font-semibold">Total</th>
+                                        <th class="px-6 py-4 text-center text-pink-900 font-semibold">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="cartItemsContainer">
@@ -72,7 +72,7 @@
                                             <div class="flex items-center gap-4">
                                                 <img src="{{ $productImage }}" alt="{{ $item->product->name }}" class="w-20 h-20 object-cover rounded-lg">
                                                 <div>
-                                                    <h3 class="font-semibold text-purple-900 mb-1">{{ $item->product->name }}</h3>
+                                                    <h3 class="font-semibold text-pink-900 mb-1">{{ $item->product->name }}</h3>
                                                     @if($item->size)
                                                     <p class="text-sm text-gray-500">Size: {{ $item->size }}</p>
                                                     @endif
@@ -90,20 +90,20 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="flex items-center justify-center gap-2">
-                                                <button onclick="updateQuantity({{ $item->id }}, {{ $item->quantity - 1 }})" class="quantity-btn w-8 h-8 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors flex items-center justify-center">
+                                                <button onclick="updateQuantity({{ $item->id }}, {{ $item->quantity - 1 }})" class="quantity-btn w-8 h-8 rounded-full bg-purple-100 text-pink-600 hover:bg-purple-200 transition-colors flex items-center justify-center">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
                                                     </svg>
                                                 </button>
-                                                <span class="quantity-display w-12 text-center font-semibold text-gray-800">{{ $item->quantity }}</span>
-                                                <button onclick="updateQuantity({{ $item->id }}, {{ $item->quantity + 1 }})" class="quantity-btn w-8 h-8 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors flex items-center justify-center">
+                                                <span class="quantity-display w-12 text-center font-semibold text-gray-800" id="quantity-{{ $item->id }}">{{ $item->quantity }}</span>
+                                                <button onclick="updateQuantity({{ $item->id }}, {{ $item->quantity + 1 }})" class="quantity-btn w-8 h-8 rounded-full bg-purple-100 text-pink-600 hover:bg-purple-200 transition-colors flex items-center justify-center">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                                     </svg>
                                                 </button>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-center font-semibold text-purple-900 item-total">
+                                        <td class="px-6 py-4 text-center font-semibold text-pink-900 item-total" id="total-{{ $item->id }}">
                                             ${{ number_format($item->product->price * $item->quantity, 2) }}
                                         </td>
                                         <td class="px-6 py-4 text-center">
@@ -112,15 +112,15 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
                                             </button>
-                                        </td>
+                                        </table>
                                     </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                         
-                        <div class="p-6 bg-purple-50 flex justify-between items-center">
-                            <a href="{{ route('shop') }}" class="flex items-center text-purple-600 hover:text-purple-800 transition-colors">
+                        <div class="p-6 bg-pink-50 flex justify-between items-center">
+                            <a href="{{ route('shop') }}" class="flex items-center text-pink-600 hover:text-pink-800 transition-colors">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                                 </svg>
@@ -135,8 +135,8 @@
                 
                 <!-- Order Summary -->
                 <div class="lg:w-1/3">
-                    <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-                        <h3 class="text-xl font-bold text-purple-900 mb-6">Order Summary</h3>
+                    <div class="bg-white shadow-lg p-6 sticky top-24">
+                        <h3 class="text-xl font-bold text-pink-900 mb-6">Order Summary</h3>
                         
                         <div class="space-y-3 mb-6">
                             <div class="flex justify-between text-gray-600">
@@ -151,8 +151,8 @@
                                 <span>Tax (8%)</span>
                                 <span id="tax">${{ number_format($tax, 2) }}</span>
                             </div>
-                            <div class="border-t border-purple-200 pt-3 mt-3">
-                                <div class="flex justify-between text-xl font-bold text-purple-900">
+                            <div class="border-t border-pink-200 pt-3 mt-3">
+                                <div class="flex justify-between text-xl font-bold text-pink-900">
                                     <span>Total</span>
                                     <span id="total">${{ number_format($total, 2) }}</span>
                                 </div>
@@ -160,7 +160,7 @@
                         </div>
                         
                         <!-- Checkout Button -->
-                        <button onclick="proceedToCheckout()" class="w-full bg-gradient-to-r from-purple-900 to-purple-800 text-white py-3 rounded-lg hover:from-gold-500 hover:to-gold-600 hover:text-purple-900 transition-all duration-300 font-semibold">
+                        <button onclick="proceedToCheckout()" class="w-full bg-gradient-to-r from-pink-950 via-pink-900 to-pink-950 text-white py-3 hover:from-gold-500 hover:to-gold-600 hover:text-pink-900 transition-all duration-300 font-semibold">
                             Proceed to Checkout
                         </button>
                     </div>
@@ -196,16 +196,10 @@
         </div>
     </div>
     
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
-        <div class="bg-white rounded-xl p-8 flex items-center gap-3">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-900"></div>
-            <span class="text-purple-900 font-semibold">Updating...</span>
-        </div>
-    </div>
-    
     <script>
         let itemToRemove = null;
+        let pendingRequests = new Map(); // Track pending requests per item
+        let updateTimeouts = new Map(); // Track debounce timeouts
         
         // Show remove confirmation modal
         function showRemoveConfirmation(itemId) {
@@ -236,51 +230,115 @@
             }
         });
         
+        // Improved updateQuantity with debounce and request queue
         function updateQuantity(itemId, newQuantity) {
             if (newQuantity < 1) return;
             
-            showLoading();
+            // Get the row elements
+            const row = document.querySelector(`tr[data-item-id="${itemId}"]`);
+            const quantityDisplay = document.getElementById(`quantity-${itemId}`);
+            const itemTotalElement = document.getElementById(`total-${itemId}`);
+            
+            // Update UI immediately for better UX
+            if (quantityDisplay) {
+                quantityDisplay.textContent = newQuantity;
+            }
+            
+            // Calculate and update item total immediately
+            const price = parseFloat(row?.dataset.price || 0);
+            const newItemTotal = price * newQuantity;
+            if (itemTotalElement) {
+                itemTotalElement.textContent = '$' + newItemTotal.toFixed(2);
+            }
+            
+            // Update totals immediately
+            recalculateTotals();
+            
+            // Clear any pending timeout for this item (debounce)
+            if (updateTimeouts.has(itemId)) {
+                clearTimeout(updateTimeouts.get(itemId));
+            }
+            
+            // Check if there's a pending request for this item
+            if (pendingRequests.has(itemId)) {
+                // Cancel the previous request by not waiting for it
+                // We'll just queue the latest request
+                updateTimeouts.set(itemId, setTimeout(() => {
+                    sendUpdateRequest(itemId, newQuantity);
+                }, 300)); // Wait 300ms after last click before sending request
+            } else {
+                // Send request after a short delay to batch rapid clicks
+                updateTimeouts.set(itemId, setTimeout(() => {
+                    sendUpdateRequest(itemId, newQuantity);
+                }, 300));
+            }
+        }
+        
+        function sendUpdateRequest(itemId, newQuantity) {
+            // Mark that we have a pending request for this item
+            pendingRequests.set(itemId, true);
             
             fetch(`/cart/update/${itemId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({ quantity: newQuantity })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Update UI
-                    const row = document.querySelector(`tr[data-item-id="${itemId}"]`);
-                    const quantityDisplay = row.querySelector('.quantity-display');
-                    const itemTotal = row.querySelector('.item-total');
+                    // Update the quantity display to match server value
+                    const quantityDisplay = document.getElementById(`quantity-${itemId}`);
+                    if (quantityDisplay && data.quantity) {
+                        quantityDisplay.textContent = data.quantity;
+                    }
                     
-                    quantityDisplay.textContent = newQuantity;
-                    itemTotal.textContent = '$' + data.item_total.toFixed(2);
+                    // Update item total if server returned different value
+                    if (data.item_total) {
+                        const itemTotalElement = document.getElementById(`total-${itemId}`);
+                        if (itemTotalElement) {
+                            itemTotalElement.textContent = '$' + data.item_total.toFixed(2);
+                        }
+                    }
                     
-                    // Recalculate totals
+                    // Recalculate totals to ensure accuracy
                     recalculateTotals();
-                    showToast(data.message, 'success');
                     updateNavbarCartCount();
+                    
+                    // Show success toast only occasionally (not on every click)
+                    if (!updateTimeouts.has(itemId + 'toast')) {
+                        showToast(data.message, 'success');
+                        updateTimeouts.set(itemId + 'toast', setTimeout(() => {
+                            updateTimeouts.delete(itemId + 'toast');
+                        }, 1000));
+                    }
+                } else {
+                    // If error, revert to server value by reloading totals
+                    recalculateTotals();
+                    showToast(data.message || 'Error updating cart', 'error');
                 }
             })
             .catch(error => {
-                showToast('Error updating cart', 'error');
+                console.error('Error:', error);
+                // Revert UI by recalculating from server
+                recalculateTotals();
+                showToast('Network error. Please try again.', 'error');
             })
             .finally(() => {
-                hideLoading();
+                pendingRequests.delete(itemId);
+                updateTimeouts.delete(itemId);
             });
         }
         
         function removeItem(itemId) {
-            showLoading();
-            
             fetch(`/cart/remove/${itemId}`, {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
                 }
             })
             .then(response => response.json())
@@ -288,40 +346,45 @@
                 if (data.success) {
                     // Remove row with animation
                     const row = document.querySelector(`tr[data-item-id="${itemId}"]`);
-                    row.style.transition = 'opacity 0.3s';
-                    row.style.opacity = '0';
-                    setTimeout(() => {
-                        row.remove();
-                        
-                        // Check if cart is empty
-                        const remainingItems = document.querySelectorAll('.cart-item').length;
-                        if (remainingItems === 0) {
-                            window.location.reload();
-                        } else {
-                            recalculateTotals();
-                            updateNavbarCartCount();
-                        }
-                    }, 300);
+                    if (row) {
+                        row.style.transition = 'opacity 0.3s';
+                        row.style.opacity = '0';
+                        setTimeout(() => {
+                            row.remove();
+                            
+                            // Check if cart is empty
+                            const remainingItems = document.querySelectorAll('.cart-item').length;
+                            if (remainingItems === 0) {
+                                window.location.reload();
+                            } else {
+                                recalculateTotals();
+                                updateNavbarCartCount();
+                            }
+                        }, 300);
+                    }
                     
                     showToast(data.message, 'success');
+                } else {
+                    showToast(data.message || 'Error removing item', 'error');
                 }
             })
             .catch(error => {
-                showToast('Error removing item', 'error');
-            })
-            .finally(() => {
-                hideLoading();
+                console.error('Error:', error);
+                showToast('Network error. Please try again.', 'error');
             });
         }
         
         function clearCart() {
-            showLoading();
+            if (!confirm('Are you sure you want to clear your entire cart?')) {
+                return;
+            }
             
             fetch(`/cart/clear`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
             })
             .then(response => response.json())
@@ -331,11 +394,13 @@
                     setTimeout(() => {
                         window.location.reload();
                     }, 1000);
+                } else {
+                    showToast(data.message || 'Error clearing cart', 'error');
                 }
             })
             .catch(error => {
-                showToast('Error clearing cart', 'error');
-                hideLoading();
+                console.error('Error:', error);
+                showToast('Network error. Please try again.', 'error');
             });
         }
         
@@ -343,43 +408,42 @@
             let subtotal = 0;
             document.querySelectorAll('.cart-item').forEach(row => {
                 const price = parseFloat(row.dataset.price);
-                const quantity = parseInt(row.querySelector('.quantity-display').textContent);
+                const quantityDisplay = row.querySelector('.quantity-display');
+                const quantity = quantityDisplay ? parseInt(quantityDisplay.textContent) : 0;
                 subtotal += price * quantity;
             });
             
             const tax = subtotal * 0.08;
             const total = subtotal + tax;
             
-            document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
-            document.getElementById('tax').textContent = '$' + tax.toFixed(2);
-            document.getElementById('total').textContent = '$' + total.toFixed(2);
+            const subtotalElement = document.getElementById('subtotal');
+            const taxElement = document.getElementById('tax');
+            const totalElement = document.getElementById('total');
+            
+            if (subtotalElement) subtotalElement.textContent = '$' + subtotal.toFixed(2);
+            if (taxElement) taxElement.textContent = '$' + tax.toFixed(2);
+            if (totalElement) totalElement.textContent = '$' + total.toFixed(2);
         }
         
         function updateNavbarCartCount() {
-            fetch('/cart/count')
-                .then(response => response.json())
-                .then(data => {
-                    if (typeof updateCartCount === 'function') {
-                        updateCartCount(data.count);
-                    }
-                })
-                .catch(error => console.error('Error fetching cart count:', error));
+            fetch('/cart/count', {
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const cartCountElement = document.getElementById('cartCount');
+                if (cartCountElement && data.count !== undefined) {
+                    cartCountElement.textContent = data.count;
+                }
+            })
+            .catch(error => console.error('Error fetching cart count:', error));
         }
         
         function proceedToCheckout() {
             showToast('Checkout page coming soon!', 'success');
-        }
-        
-        function showLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            overlay.classList.remove('hidden');
-            overlay.classList.add('flex');
-        }
-        
-        function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            overlay.classList.add('hidden');
-            overlay.classList.remove('flex');
         }
         
         function showToast(message, type = 'success') {
@@ -392,7 +456,7 @@
             }
             
             toast.textContent = message;
-            toast.classList.remove('hidden', 'bg-red-500', 'bg-purple-900');
+            toast.classList.remove('hidden', 'bg-red-500', 'bg-green-500', 'bg-purple-900');
             
             if (type === 'error') {
                 toast.classList.add('bg-red-500', 'text-white');
@@ -402,7 +466,7 @@
             
             setTimeout(() => {
                 toast.classList.add('hidden');
-            }, 3000);
+            }, 2000); // Shorter duration for better UX
         }
         
         // Close modal when clicking outside
@@ -422,8 +486,17 @@
             transform: scale(1.1);
         }
         
+        .quantity-btn:active {
+            transform: scale(0.95);
+        }
+        
         .cart-item {
             transition: opacity 0.3s ease;
+        }
+        
+        /* Remove loading overlay since we want instant feedback */
+        #loadingOverlay {
+            display: none !important;
         }
     </style>
 </body>

@@ -28,25 +28,26 @@ class CartController extends Controller
     
     // Update cart item quantity
     public function update(Request $request, $id)
-    {
-        $cartItem = Cart::where('id', $id)
-            ->where('user_id', Auth::id())
-            ->firstOrFail();
-        
-        $request->validate([
-            'quantity' => 'required|integer|min:1|max:' . $cartItem->product->stock
-        ]);
-        
-        $cartItem->update([
-            'quantity' => $request->quantity
-        ]);
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Cart updated successfully',
-            'item_total' => $cartItem->product->price * $cartItem->quantity
-        ]);
-    }
+{
+    $cartItem = Cart::where('id', $id)
+        ->where('user_id', Auth::id())
+        ->firstOrFail();
+    
+    $request->validate([
+        'quantity' => 'required|integer|min:1|max:' . $cartItem->product->stock
+    ]);
+    
+    $cartItem->update([
+        'quantity' => $request->quantity
+    ]);
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Cart updated successfully',
+        'item_total' => $cartItem->product->price * $cartItem->quantity,
+        'quantity' => $cartItem->quantity // Return the updated quantity
+    ]);
+}
     
     // Remove item from cart
    public function remove($id)
