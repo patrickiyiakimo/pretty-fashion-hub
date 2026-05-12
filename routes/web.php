@@ -4,6 +4,9 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 
 // Home page
@@ -30,12 +33,36 @@ Route::get('/contact', function () {
 Route::get('/shop', [ProductController::class, 'shop'])->name('shop');
 Route::get('/product/{slug}', [ProductController::class, 'productDetail'])->name('product.detail');
 
+// Admin routes (protected)
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // User management
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('delete-user');
+    Route::put('/users/{id}/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('toggle-user-status');
+    
+    // Product management
+    Route::get('/products', [AdminController::class, 'products'])->name('products');
+    Route::get('/products/create', [AdminController::class, 'createProduct'])->name('create-product');
+    Route::post('/products', [AdminController::class, 'storeProduct'])->name('store-product');
+    Route::get('/products/{id}/edit', [AdminController::class, 'editProduct'])->name('edit-product');
+    Route::put('/products/{id}', [AdminController::class, 'updateProduct'])->name('update-product');
+    Route::delete('/products/{id}', [AdminController::class, 'deleteProduct'])->name('delete-product');
+});
+
 // Authentication Routes (guest only)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+
+    // Password reset routes
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
 // Protected Routes (authenticated users only)

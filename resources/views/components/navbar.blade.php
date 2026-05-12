@@ -102,6 +102,42 @@
                                     </div>
                                 </div>
                             </div>
+
+@auth
+    @if(Auth::user()->is_admin)
+    <a href="{{ route('admin.dashboard') }}" class="relative group">
+        <div class="flex items-center gap-2 px-10 py-2 bg-gradient-to-r from-pink-800/20 to-pink-900/20 border border-pink-500/30 hover:border-pink-400/50 transition-all duration-300">
+            <!-- Crown Icon -->
+            <div class="relative">
+                <svg class="w-4 h-4 text-gold-400 group-hover:text-gold-300 transition-colors duration-300" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z"/>
+                </svg>
+                <div class="absolute inset-0 bg-gold-400 blur-sm opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
+            </div>
+            
+            <!-- Text -->
+            <span class="text-sm font-semibold tracking-wide text-pink-900 group-hover:text-gold-400 transition-colors duration-300">
+                ADMIN PANEL
+            </span>
+            
+            <!-- Shield Icon -->
+            <svg class="w-4 h-4 text-pink-400 group-hover:text-gold-400 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+        </div>
+        
+        <!-- Animated Border Bottom -->
+        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold-400 to-gold-500 group-hover:w-full transition-all duration-500"></span>
+        
+        <!-- Right Border Animation -->
+        <span class="absolute top-0 right-0 w-0.5 h-0 bg-gradient-to-b from-gold-400 to-gold-500 group-hover:h-full transition-all duration-500 delay-100"></span>
+        
+        <!-- Bottom Border Animation -->
+        <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-gradient-to-l from-gold-400 to-gold-500 group-hover:w-full transition-all duration-500 delay-200"></span>
+    </a>
+    @endif
+@endauth
+
                             <div class="py-2">
                                 <a href="/profile" class="flex items-center px-4 py-3 text-gray-700 hover:bg-pink-50 transition-colors group">
                                     <svg class="w-5 h-5 text-pink-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,6 +292,44 @@
                                 </div>
                             </div>
                         </div>
+
+                        
+@auth
+    @if(Auth::user()->is_admin)
+    <a href="{{ route('admin.dashboard') }}" class="relative group">
+        <div class="flex items-center gap-2 px-10 py-2 bg-gradient-to-r from-pink-800/20 to-pink-900/20 border border-pink-500/30 hover:border-pink-400/50 transition-all duration-300">
+            <!-- Crown Icon -->
+            <div class="relative">
+                <svg class="w-4 h-4 text-gold-400 group-hover:text-gold-300 transition-colors duration-300" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z"/>
+                </svg>
+                <div class="absolute inset-0 bg-gold-400 blur-sm opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
+            </div>
+            
+            <!-- Text -->
+            <span class="text-sm font-semibold tracking-wide text-pink-300 group-hover:text-gold-400 transition-colors duration-300">
+                ADMIN PANEL
+            </span>
+            
+            <!-- Shield Icon -->
+            <svg class="w-4 h-4 text-pink-400 group-hover:text-gold-400 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+        </div>
+        
+        <!-- Animated Border Bottom -->
+        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold-400 to-gold-500 group-hover:w-full transition-all duration-500"></span>
+        
+        <!-- Right Border Animation -->
+        <span class="absolute top-0 right-0 w-0.5 h-0 bg-gradient-to-b from-gold-400 to-gold-500 group-hover:h-full transition-all duration-500 delay-100"></span>
+        
+        <!-- Bottom Border Animation -->
+        <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-gradient-to-l from-gold-400 to-gold-500 group-hover:w-full transition-all duration-500 delay-200"></span>
+    </a>
+    @endif
+@endauth
+
+
                         <a href="/profile" class="px-4 py-3 text-pink-200 hover:text-gold-400 hover:bg-pink-800/50 rounded-lg transition-all duration-300 flex items-center gap-3">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
