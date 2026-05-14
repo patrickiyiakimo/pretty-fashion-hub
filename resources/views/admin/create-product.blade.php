@@ -116,3 +116,41 @@
     @include('components.footer')
 </body>
 </html>
+
+<script>
+    // Image preview functionality
+    document.getElementById('images')?.addEventListener('change', function(e) {
+        const previewContainer = document.getElementById('imagePreview');
+        if (!previewContainer) {
+            const container = document.createElement('div');
+            container.id = 'imagePreview';
+            container.className = 'flex flex-wrap gap-4 mt-4';
+            this.parentNode.appendChild(container);
+        }
+        
+        const container = document.getElementById('imagePreview');
+        container.innerHTML = '';
+        
+        const files = Array.from(e.target.files);
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const div = document.createElement('div');
+                div.className = 'relative';
+                div.innerHTML = `
+                    <img src="${event.target.result}" class="w-24 h-24 object-cover border border-pink-200">
+                    <button type="button" class="absolute top-0 right-0 bg-red-500 text-white w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 remove-image">×</button>
+                `;
+                container.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+    
+    // Remove image preview on click
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-image')) {
+            e.target.closest('.relative').remove();
+        }
+    });
+</script>

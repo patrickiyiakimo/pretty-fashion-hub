@@ -101,10 +101,16 @@
                         <div class="bg-white overflow-hidden shadow-md transition-all duration-300 transform hover:-translate-y-2">
                             <!-- Product Image -->
                             <div class="relative overflow-hidden bg-purple-100 h-80">
-                                <img src="{{ $firstImage }}" 
-                                     alt="{{ $product->name }}"
-                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                
+                               @php
+    // Fix image path
+    if ($firstImage && !filter_var($firstImage, FILTER_VALIDATE_URL)) {
+        $firstImage = asset('storage/' . $firstImage);
+    }
+@endphp
+<img src="{{ $firstImage }}" 
+     alt="{{ $product->name }}"
+     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+     onerror="this.src='https://via.placeholder.com/400x500?text=No+Image'">
                                 <!-- Badges -->
                                 @if($product->on_sale)
                                 <div class="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
@@ -557,6 +563,163 @@
     document.addEventListener('DOMContentLoaded', function() {
         updateCartCountFromServer();
     });
+
+
+   // ============================================
+// WhatsApp Cart Sharing Functions
+// ============================================
+
+// ============================================
+// IMPROVED WHATSAPP CART SHARING FUNCTIONS
+// ============================================
+
+// Function to get current cart items with detailed information
+async function getCartItems() {
+    try {
+        const response = await fetch('/cart/items', {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch cart');
+        }
+        
+        const data = await response.json();
+        console.log('Cart data:', data); // Debug log
+        return data;
+    } catch (error) {
+        console.error('Error fetching cart:', error);
+        showToast('Error loading cart. Please try again.', 'error');
+        return null;
+    }
+}
+
+// Function to format cart items for WhatsApp message (Plain text version)
+function formatCartForWhatsApp(cartData) {
+    if (!cartData || !cartData.items || cartData.items.length === 0) {
+        return null;
+    }
+    
+    const items = cartData.items;
+    const totals = cartData.totals;
+    
+    let message = "";
+    message += "🛍️ PRETTY FASHION HUB - NEW ORDER 🛍️\n";
+    message += "================================\n\n";
+    
+    message += "📋 ORDER DETAILS:\n";
+    message += "--------------------------------\n\n";
+    
+    items.forEach((item, index) => {
+        message += `${index + 1}. ${item.name}\n`;
+        message += `   Quantity: ${item.quantity}\n`;
+        if (item.size && item.size !== 'null' && item.size !== 'undefined') {
+            message += `   Size: ${item.size}\n`;
+        }
+        if (item.color && item.color !== 'null' && item.color !== 'undefined') {
+            message += `   Color: ${item.color}\n`;
+        }
+        message += `   Price: ₦${parseFloat(item.price).toLocaleString()}\n`;
+        message += `   Subtotal: ₦${(item.price * item.quantity).toLocaleString()}\n`;
+        message += `   ---\n`;
+    });
+    
+    message += "\n💰 PAYMENT BREAKDOWN:\n";
+    message += "--------------------------------\n";
+    message += `Subtotal: ₦${totals.subtotal.toLocaleString()}\n`;
+    message += `Shipping: ₦${totals.shipping.toLocaleString()}\n`;
+    message += `Tax (8%): ₦${totals.tax.toLocaleString()}\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `TOTAL: ₦${totals.total.toLocaleString()}\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+    
+    message += "👤 CUSTOMER INFORMATION:\n";
+    message += "--------------------------------\n";
+    message += `Name: \n`;
+    message += `Phone: \n`;
+    message += `Email: \n`;
+    message += `Delivery Address: \n\n`;
+    
+    message += "📝 ADDITIONAL NOTES:\n";
+    message += "--------------------------------\n";
+    message += `Preferred Delivery Date: \n`;
+    message += `Preferred Delivery Time: \n`;
+    message += `Special Instructions: \n\n`;
+    
+    message += "✅ Please confirm my order and provide payment details.\n";
+    message += "Thank you for shopping with Pretty Fashion Hub! 💕\n";
+    
+    return message;
+}
+
+// Main function to share cart on WhatsApp
+window.shareCartOnWhatsApp = async function() {
+    // Show loading state
+    const whatsappBtn = document.getElementById('whatsappCartBtn');
+    const originalIcon = whatsappBtn?.innerHTML;
+    
+    if (whatsappBtn) {
+        whatsappBtn.disabled = true;
+        whatsappBtn.style.opacity = '0.5';
+        showToast('Preparing your order summary...', 'info');
+    }
+    
+    try {
+        // Get cart items
+        const cartData = await getCartItems();
+        
+        // Check if cart is empty
+        if (!cartData || !cartData.items || cartData.items.length === 0) {
+            showToast('Your cart is empty! Add some items first.', 'error');
+            if (whatsappBtn) {
+                whatsappBtn.disabled = false;
+                whatsappBtn.style.opacity = '1';
+            }
+            return;
+        }
+        
+        // Format the message
+        let message = formatCartForWhatsApp(cartData);
+        
+        if (!message) {
+            showToast('Unable to format cart items.', 'error');
+            return;
+        }
+        
+        // Encode the message for URL
+        const encodedMessage = encodeURIComponent(message);
+        
+        // Your WhatsApp number - CHANGE THIS TO YOUR ACTUAL NUMBER
+        // Format: country code without + (e.g., 234 for Nigeria)
+        const whatsappNumber = '2348143643066'; // ⚠️ REPLACE WITH YOUR NUMBER
+        
+        // Create WhatsApp URL with the message
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+        
+        console.log('Opening WhatsApp with message:', message); // Debug log
+        
+        // Open WhatsApp
+        window.open(whatsappUrl, '_blank');
+        
+        showToast('Opening WhatsApp with your cart...', 'success');
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error sharing cart. Please try again.', 'error');
+    } finally {
+        // Reset button state
+        if (whatsappBtn) {
+            setTimeout(() => {
+                whatsappBtn.disabled = false;
+                whatsappBtn.style.opacity = '1';
+            }, 2000);
+        }
+    }
+};
 </script>
 </body>
 </html>

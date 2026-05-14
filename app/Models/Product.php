@@ -10,22 +10,21 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 
-        'slug', 
-        'description', 
-        'price', 
-        'compare_price',
-        'sku', 
-        'category', 
-        'images', 
-        'sizes', 
-        'colors', 
-        'stock',
-        'featured', 
-        'new_arrival', 
-        'on_sale'
-    ];
-
+    'name',
+    'slug',
+    'sku',  // Make sure this is here
+    'description',
+    'price',
+    'compare_price',
+    'category',
+    'stock',
+    'images',
+    'colors',
+    'sizes',
+    'on_sale',
+    'new_arrival',
+    'featured'
+];
     protected $casts = [
         'images' => 'array',
         'sizes' => 'array',

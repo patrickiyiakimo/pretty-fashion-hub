@@ -87,5 +87,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
+    // Get cart items for WhatsApp sharing
+    Route::get('/cart/items', [CartController::class, 'getCartItems'])->name('cart.items');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

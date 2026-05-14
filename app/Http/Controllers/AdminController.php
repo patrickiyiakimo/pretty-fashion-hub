@@ -11,12 +11,6 @@ use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
-    // Remove this entire __construct method
-    // public function __construct()
-    // {
-    //     $this->middleware('admin');
-    // }
-    
     // Admin Dashboard
     public function dashboard()
     {
@@ -28,7 +22,7 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('totalUsers', 'totalProducts', 'recentUsers', 'recentProducts'));
     }
     
-    // Rest of your methods remain the same...
+    // User Management
     public function users()
     {
         $users = User::orderBy('created_at', 'desc')->paginate(15);
@@ -67,6 +61,7 @@ class AdminController extends Controller
         ]);
     }
     
+    // Product Management
     public function products()
     {
         $products = Product::orderBy('created_at', 'desc')->paginate(12);
@@ -79,54 +74,75 @@ class AdminController extends Controller
     }
     
     public function storeProduct(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'required|string',
-        'price' => 'required|numeric|min:0',
-        'compare_price' => 'nullable|numeric|min:0',
-        'category' => 'required|string|max:100',
-        'stock' => 'required|integer|min:0',
-        'images' => 'required|array|min:1',
-        'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-        'colors' => 'nullable|array',
-        'sizes' => 'nullable|array',
-        'on_sale' => 'nullable|boolean',
-        'new_arrival' => 'nullable|boolean',
-        'featured' => 'nullable|boolean'
-    ]);
-    
-    // Handle images upload
-    $imagePaths = [];
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $image) {
-            // Store in storage/app/public/products
-            $path = $image->store('products', 'public');
-            $imagePaths[] = $path;
+    {
+        // Log the request to debug
+        \Log::info('Store product request received', $request->all());
+        
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'compare_price' => 'nullable|numeric|min:0',
+            'category' => 'required|string|max:100',
+            'stock' => 'required|integer|min:0',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'colors' => 'nullable|string',
+            'sizes' => 'nullable|string',
+            'on_sale' => 'nullable|boolean',
+            'new_arrival' => 'nullable|boolean',
+            'featured' => 'nullable|boolean'
+        ]);
+        
+        // Handle images upload
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                if ($image->isValid()) {
+                    $path = $image->store('products', 'public');
+                    $imagePaths[] = $path;
+                }
+            }
+        }
+        
+        // If no images were uploaded, return error
+        if (empty($imagePaths)) {
+            return back()->with('error', 'Please upload at least one valid image.');
+        }
+        
+        // Generate unique SKU
+        $sku = 'PRD-' . strtoupper(Str::random(8));
+        
+        // Generate slug
+        $slug = Str::slug($request->name) . '-' . Str::random(6);
+        
+        // Process colors and sizes (they come as JSON strings)
+        $colors = $request->colors ? json_decode($request->colors, true) : [];
+        $sizes = $request->sizes ? json_decode($request->sizes, true) : [];
+        
+        // Create product
+        $product = Product::create([
+            'name' => $request->name,
+            'slug' => $slug,
+            'sku' => $sku,  // SKU is now included here
+            'description' => $request->description,
+            'price' => $request->price,
+            'compare_price' => $request->compare_price,
+            'category' => $request->category,
+            'stock' => $request->stock,
+            'images' => json_encode($imagePaths),
+            'colors' => json_encode($colors),
+            'sizes' => json_encode($sizes),
+            'on_sale' => $request->has('on_sale'),
+            'new_arrival' => $request->has('new_arrival'),
+            'featured' => $request->has('featured')
+        ]);
+        
+        if ($product) {
+            return redirect()->route('admin.products')->with('success', 'Product created successfully!');
+        } else {
+            return back()->with('error', 'Failed to create product. Please try again.');
         }
     }
-    
-    // Generate slug
-    $slug = Str::slug($request->name) . '-' . uniqid();
-    
-    $product = Product::create([
-        'name' => $request->name,
-        'slug' => $slug,
-        'description' => $request->description,
-        'price' => $request->price,
-        'compare_price' => $request->compare_price,
-        'category' => $request->category,
-        'stock' => $request->stock,
-        'images' => json_encode($imagePaths),
-        'colors' => json_encode($request->colors ?? []),
-        'sizes' => json_encode($request->sizes ?? []),
-        'on_sale' => $request->has('on_sale'),
-        'new_arrival' => $request->has('new_arrival'),
-        'featured' => $request->has('featured')
-    ]);
-    
-    return redirect()->route('admin.products')->with('success', 'Product created successfully!');
-}
     
     public function editProduct($id)
     {
@@ -145,25 +161,28 @@ class AdminController extends Controller
             'compare_price' => 'nullable|numeric|min:0',
             'category' => 'required|string|max:100',
             'stock' => 'required|integer|min:0',
-            'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'colors' => 'nullable|array',
-            'sizes' => 'nullable|array',
+            'colors' => 'nullable|string',
+            'sizes' => 'nullable|string',
             'on_sale' => 'nullable|boolean',
             'new_arrival' => 'nullable|boolean',
             'featured' => 'nullable|boolean'
         ]);
         
+        // Handle images upload
         $existingImages = json_decode($product->images, true) ?? [];
         
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $path = $image->store('products', 'public');
-                $existingImages[] = $path;
+                if ($image->isValid()) {
+                    $path = $image->store('products', 'public');
+                    $existingImages[] = $path;
+                }
             }
         }
         
-        if ($request->has('remove_images')) {
+        // Remove images if requested
+        if ($request->has('remove_images') && !empty($request->remove_images)) {
             $removeImages = explode(',', $request->remove_images);
             foreach ($removeImages as $imagePath) {
                 if (Storage::disk('public')->exists($imagePath)) {
@@ -173,6 +192,10 @@ class AdminController extends Controller
             }
         }
         
+        // Process colors and sizes
+        $colors = $request->colors ? json_decode($request->colors, true) : [];
+        $sizes = $request->sizes ? json_decode($request->sizes, true) : [];
+        
         $product->update([
             'name' => $request->name,
             'description' => $request->description,
@@ -181,8 +204,8 @@ class AdminController extends Controller
             'category' => $request->category,
             'stock' => $request->stock,
             'images' => json_encode($existingImages),
-            'colors' => json_encode($request->colors ?? []),
-            'sizes' => json_encode($request->sizes ?? []),
+            'colors' => json_encode($colors),
+            'sizes' => json_encode($sizes),
             'on_sale' => $request->has('on_sale'),
             'new_arrival' => $request->has('new_arrival'),
             'featured' => $request->has('featured')
@@ -195,6 +218,7 @@ class AdminController extends Controller
     {
         $product = Product::findOrFail($id);
         
+        // Delete images from storage
         $images = json_decode($product->images, true) ?? [];
         foreach ($images as $image) {
             if (Storage::disk('public')->exists($image)) {
